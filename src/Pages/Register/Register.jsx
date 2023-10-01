@@ -1,4 +1,4 @@
-import { createUserWithEmailAndPassword, sendEmailVerification } from "firebase/auth";
+import { createUserWithEmailAndPassword, sendEmailVerification, updateProfile } from "firebase/auth";
 import { useState } from "react";
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import { Link } from "react-router-dom";
@@ -45,6 +45,18 @@ const Register = () => {
             const user = result.user;
             console.log('create user', user);
             swal("Good job!", "user created successfully!", "success");
+
+            // update user profile
+            updateProfile(user, {
+                displayName: name,
+            })
+            .then(()=>{
+                alert("updated Profile!");
+            })
+            .catch(error =>{
+                setError(error.message)
+            })
+
 
             // send email verification
             sendEmailVerification(user)
