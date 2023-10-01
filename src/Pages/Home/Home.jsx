@@ -19,7 +19,7 @@ const Home = () => {
         <div className="grid md:grid-cols-3 gap-4">
            {
             dress.map(item => <Item
-                key={item.id}
+                key={item._id}
                 item={item}
                 ></Item>)
            }

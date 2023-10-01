@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 
 
 const Item = ({item}) => {
-    console.log(item)
+   
     const { name, picture, price} = item;
     return (
         <div>

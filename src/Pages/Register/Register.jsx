@@ -1,6 +1,7 @@
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword, sendEmailVerification } from "firebase/auth";
 import { useState } from "react";
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
+import { Link } from "react-router-dom";
 import swal from "sweetalert";
 import auth from "../../Firebase/firebase.config";
 
@@ -43,7 +44,18 @@ const Register = () => {
         .then(result =>{
             const user = result.user;
             console.log('create user', user);
-            swal("Good job!", "user created successfully!", "success")
+            swal("Good job!", "user created successfully!", "success");
+
+            // send email verification
+            sendEmailVerification(user)
+            .then(()=>{
+                swal("please check your email!"); 
+            })
+            .catch(error=>{
+                setError(error.message);
+            })
+
+
             form.reset();
         })
         .catch(error => {
@@ -103,6 +115,9 @@ const Register = () => {
               <input className="btn btn-primary" type="submit" value="Register" />
             </div>
               </form>
+              <div>
+                <p>Already Have Account? <Link className="text-primary font-bold" to='/login'>Login</Link></p>
+              </div>
               <p className="text-sm my-4 font-semibold text-red-700">{error}</p>
             </div>
           </div>
