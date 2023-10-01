@@ -1,6 +1,14 @@
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { useState } from "react";
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
+import swal from "sweetalert";
+import auth from "../../Firebase/firebase.config";
 
 
 const Register = () => {
+    const[error , setError] = useState('');
+
+    const [showPassword, setShowPassword] = useState(false);
 
     const handleRegister = event =>{
         event.preventDefault();
@@ -9,7 +17,39 @@ const Register = () => {
         const name = form.name.value;
         const email = form.email.value;
         const password = form.password.value;
-        console.log(name,email, password)
+
+        const accepted = form.terms.checked;
+        
+        console.log(name,email, password, accepted);
+
+        if(password.length < 6){
+            setError('Password should be 6 character');
+            return;
+        }
+        else if(!/[A-Z]/.test(password)){
+            setError('Please Provider an UpperCase later');
+            return;
+        }
+        else if(!accepted){
+            setError('Please accept Terms and condition!')
+            return;
+        }
+
+        // reset error
+        setError('');
+
+        // create user
+        createUserWithEmailAndPassword(auth, email, password)
+        .then(result =>{
+            const user = result.user;
+            console.log('create user', user);
+            swal("Good job!", "user created successfully!", "success")
+            form.reset();
+        })
+        .catch(error => {
+           
+            setError(error.message)
+        })
 
 
     }
@@ -28,7 +68,7 @@ const Register = () => {
               <label className="label">
                 <span className="label-text">Name</span>
               </label>
-              <input type="text" name="name" required placeholder="Name" className="input input-bordered" />
+              <input type="text" name="name" placeholder="Name" className="input input-bordered" />
             </div>
               <div className="form-control">
               <label className="label">
@@ -40,15 +80,30 @@ const Register = () => {
               <label className="label">
                 <span className="label-text">Password</span>
               </label>
-              <input type="password" name="password" required placeholder="password" className="input input-bordered" />
+              <input 
+              type= {showPassword ? 'text' : "password" }
+              name="password"
+             required
+             placeholder="password" 
+             className="input input-bordered" />
               <label className="label">
-                <a href="#" className="label-text-alt link link-hover">Forgot password?</a>
+                <span onClick={()=>setShowPassword(!showPassword)}  className=" font-bold">
+                {
+                   showPassword ? <FaEyeSlash className="text-xl"></FaEyeSlash> : <FaEye className="text-xl"></FaEye>
+                }
+                </span>
               </label>
             </div>
+            <div className="">
+            <input type="checkbox" name="terms" id="terms" />
+            <label htmlFor="terms"> Accept our<a href="#">Terms and condition</a></label>
+            </div>
+            
             <div className="form-control mt-6">
               <input className="btn btn-primary" type="submit" value="Register" />
             </div>
               </form>
+              <p className="text-sm my-4 font-semibold text-red-700">{error}</p>
             </div>
           </div>
         </div>
